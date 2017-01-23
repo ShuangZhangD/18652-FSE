@@ -11,12 +11,14 @@ var chat = require(('./routes/index'));
 var app = express();
 
 // var app = require('../app');
-var debug = require('debug')('ChatNew:server');
+var debug = require('debug')('FSE-ShuangZhang-Chatroom:server');
 var http = require('http');
 // view engine setup
 //app.set('views', path.join(__dirname, 'views'));
 //app.set('view engine', 'jade');
 var server = http.createServer(app);
+var sqlite3 = require('sqlite3').verbose();
+var db = new sqlite3.Database('./chat.db');
 
 app.get('/',function(req,res){
   res.sendFile(__dirname+'/views/chat.html');
@@ -67,8 +69,7 @@ app.use(function(err, req, res, next) {
   });
 });
 
-var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database('./chat.db');
+
 
 /**
  * Get port from environment and store in Express.
@@ -84,6 +85,7 @@ db.run("CREATE TABLE IF NOT EXISTS messages (userName TEXT, time TEXT, content T
 
 var insertUser = db.prepare("insert into users Values(?,?)");
 var insertMessage = db.prepare("insert into messages Values(?,?,?)");
+
 /**
  * add socket.io
  */
@@ -130,6 +132,7 @@ io.on('connection', function(socket) {
   });
 
 });
+
 /**
  * Listen on provided port, on all network interfaces.
  */
