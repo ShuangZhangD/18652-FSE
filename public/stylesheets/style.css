@@ -1,8 +1,94 @@
 body {
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: 24px "Lucida Grande", Helvetica, Arial, sans-serif;
+  margin: 180px;
+  width: 100px;
+  background-color: #00CCAA;  
 }
 
-a {
-  color: #00B7FF;
+h1 {
+  color: black;
+}
+
+#indexBody {
+  background-color: #000000;
+  width: 2000px;
+}
+
+#nameInput {
+  font-size: large;
+  color: black;
+  width: 10em;
+  height: 3em;
+  position: relative;
+  left: 200px;
+  border: inset;
+}
+
+#nameButton {
+  background-color: black;
+  color: white;
+  font-size: large;
+  width: 10em;
+  height: 3em;
+  position: relative;
+  left: 200px;
+  border: inherit;
+}
+
+
+#userName {
+  color: black;
+  font-size: 20px;
+}
+
+#m {
+  font-size: large;
+  color: black;
+  width: 32em;
+  height: 2.4em;
+  position: relative;
+  left: 15px;
+  border: inset;
+}
+
+#postMsg {
+  background-color: black;
+  color: white;
+  font-size: larger;
+  width: 3em;
+  height: 2em;
+  margin: 15px;  
+  position: absolute;
+  left: 480px;
+  border: inherit;
+}
+
+
+dl dt {
+  background-color: lightblue;
+  margin: 15px;
+  color: black;
+  width: 580px;
+  font-size: large;
+}
+
+dl dd {
+  background-color: white;
+  margin: 15px;
+  color: black;
+  width: 580px;
+  font-size: large;
+}
+
+#leave {
+  background-color: black;
+  color: white;
+  font-size: larger;
+  width: 3em;
+  height: 2em;
+  margin: 15px;  
+  position: absolute;
+  left: 300px;
+  border: inherit;
 }
