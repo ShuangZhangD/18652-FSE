@@ -19,7 +19,12 @@ var http = require('http');
 var server = http.createServer(app);
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database('./chat.db');
-
+db.run("CREATE TABLE IF NOT EXISTS users (userName TEXT, joinTime TEXT)");
+db.run("CREATE TABLE IF NOT EXISTS messages (userName TEXT, time TEXT, content TEXT)");
+/**
+ * add socket.io
+ */
+var io = require("socket.io")(server);
 app.get('/',function(req,res){
   res.sendFile(__dirname+'/views/chat.html');
 });
@@ -80,16 +85,11 @@ app.set('port', port);
 /**
  * initialize database
  */
-db.run("CREATE TABLE IF NOT EXISTS users (userName TEXT, joinTime TEXT)");
-db.run("CREATE TABLE IF NOT EXISTS messages (userName TEXT, time TEXT, content TEXT)");
 
 var insertUser = db.prepare("insert into users Values(?,?)");
 var insertMessage = db.prepare("insert into messages Values(?,?,?)");
 
-/**
- * add socket.io
- */
-var io = require("socket.io")(server);
+
 
 io.on('connection', function(socket) {
   socket.on('chat message', function(data) {
@@ -104,31 +104,24 @@ io.on('connection', function(socket) {
       if(row.length == 0) {
         var time = new Date().toLocaleString();
         insertUser.run(userName, time);
-        insertMessage.run(userName, time, userName + userName + " entered the chatroom");
-        console.log("new user");
+        insertMessage.run(userName, time, userName + " entered the chatroom");
       } else {
-        console.log(row[0].joinTime);
         db.all("select * from messages where time >\'" + row[0].joinTime + "\'", function(err, row){
-
-          //console.log(row[0].joinTime);
-          sendHistoryData(row, userName);
+          loaddata(row, userName);
         });
-        console.log("old user");
       }
     });
     io.emit('new user', userName);
   });
 
-  function sendHistoryData(messages, userName) {
-    console.log(messages.length);
-    io.emit('load old message', {messages : messages, userName : userName});
+  function loaddata(messages, userName) {
+    io.emit('load message', {messages : messages, userName : userName});
   }
 
   socket.on('leave', function(userName){
     io.emit('leave', userName);
-    console.log(userName + " left the group");
     var time = new Date().toLocaleString();
-    insertMessage.run(userName, time, userName + " left the group");
+    insertMessage.run(userName, time, userName + " left the chatroom");
   });
 
 });
