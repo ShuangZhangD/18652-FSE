@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>FSE-ShuangZhang-Chatroom</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+  </head>
+  <body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>var userName = "";
+      var socket = io();
+      
+      var userName = prompt("What's your name");
+      socket.emit('new user', userName);
+      socket.on("broadcast messages", function(data) {
+          var list = document.getElementById("messages");
+          list.appendChild(dialog(data.userName));
+          list.appendChild(loadmessage(data.msg));
+      });
+      
+      socket.on("new user", function(userName){
+          var list = document.getElementById("messages");
+          list.appendChild(dialog(userName));
+          list.appendChild(loadmessage(userName + " entered the chatroom"));
+      });
+      
+      socket.on("leave", function(userName){
+          var list = document.getElementById("messages");
+          list.appendChild(dialog(userName));
+          list.appendChild(loadmessage(userName + " left the chatroom"));
+      });
+      
+      socket.on("load message", function(data){
+          var list = document.getElementById("messages");
+          if (data.userName == userName) {
+              data.messages.forEach(function(message){
+                  list.appendChild(dialog(message.userName));
+                  list.appendChild(loadmessage(message.content));
+              });
+          }
+      });
+      
+      function sendMessage() {
+          socket.emit('chat message', {msg : $('#m').val(), userName : userName});
+          $('#m').val('');
+      };
+      
+      function leaveRoom(){
+          socket.emit('leave', userName);
+      };
+      
+      function dialog(userName) {
+          var dt = document.createElement("DT");
+          var time = new Date().toLocaleString();
+          dt.appendChild(document.createTextNode(time + "\t\t\t\t" + userName));
+          return dt;
+      };
+      
+      function loadmessage(content){
+          var dd = document.createElement("DD");
+          dd.appendChild(document.createTextNode(content));
+          return dd;
+      };
+      
+    </script>
+    <dl id="messages"></dl>
+    <input id="m" autocomplete="off">
+    <button id="postMsg" onclick="sendMessage()">send</button>
+    <form action="/" method="get">
+      <button id="leave" onclick="leaveRoom()">leave</button>
+    </form>
+  </body>
